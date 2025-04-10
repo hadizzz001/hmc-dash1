@@ -8,9 +8,9 @@ export async function PATCH(request, { params }) {
   const {
     title,
     description,
-    img,
-    category,
-     
+    img, 
+    price ,
+    location ,
   } = await request.json();
 
   console.log("imgs are: ", img);
@@ -18,14 +18,14 @@ export async function PATCH(request, { params }) {
 
   try {
     // Update product and its specifications
-    const updatedProduct = await prisma.arch.update({
+    const updatedProduct = await prisma.real.update({
       where: { id },
       data: {
         title,
         description,
-        img,
-        category,
-         
+        img, 
+        price ,
+        location ,
       },
     });
 
@@ -47,7 +47,7 @@ export async function DELETE(request, { params }) {
  
 
     // Delete the product
-    await prisma.arch.delete({
+    await prisma.real.delete({
       where: { id },
     });
 

@@ -88,19 +88,11 @@ export default function ProductTable() {
     return product.title.toLowerCase().includes(searchQuery.toLowerCase());
   };
 
-  // Filter products by selected category
-  const filterByCategory = (product) => {
-    const isFilteredByCategory = selectedCategory ? product.category === selectedCategory : true;
-    
-    // Log the filtering process for debugging
-    console.log(`Filtering product: ${product.title} | Category: ${product.category} | Selected Category: ${selectedCategory} | Show: ${isFilteredByCategory}`);
-    
-    return isFilteredByCategory;
-  };
+ 
 
   // Apply both search and category filters
   const filteredProducts = products.filter((product) => {
-    return filterBySearch(product) && filterByCategory(product);
+    return filterBySearch(product)  ;
   });
 
   // Log the filtered products to check what's being displayed
@@ -136,32 +128,14 @@ export default function ProductTable() {
         />
       </div>
 
-      {/* Category Filter */}
-      <div className="mb-4">
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="w-full border p-2"
-        >
-          <option value="">Select a category</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.name}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-      </div>
+   
 
       <table className="table-auto w-full border-collapse border border-gray-200 mb-4">
   <thead>
     <tr className="bg-gray-100">
       <th className="border p-2">Title</th>
-      <th className="border p-2">Pic</th>
-      <th className="border p-2">Price (USD)</th>
-      <th className="border p-2">Discount Price (USD)</th>
-      <th className="border p-2">Stock</th>
-      <th className="border p-2">Category</th> 
-      <th className="border p-2">New Arrival</th>
+      <th className="border p-2">Pic</th> 
+      <th className="border p-2">Category</th>  
       <th className="border p-2">Actions</th>
     </tr>
   </thead>
@@ -184,12 +158,8 @@ export default function ProductTable() {
     ) : (
       <img src={fileUrl} alt="Product Image" className="w-24 h-auto" />
     )}
-  </td>
-  <td className="border p-2">{product.price}</td>
-  <td className="border p-2">{product.discount || "N/A"}</td>
-  <td className="border p-2">{product.stock}</td>
-  <td className="border p-2">{product.category}</td> 
-  <td className="border p-2">{product.arrival}</td>
+  </td> 
+  <td className="border p-2">{product.category}</td>  
   <td className="border p-2">
     <button
       onClick={() => handleEdit(product)}
@@ -215,35 +185,18 @@ export default function ProductTable() {
     </div>
   );
 }
+ 
 
-function EditProductForm({ product, onCancel, onSave }) {
+function  EditProductForm({ product, onCancel, onSave }) {
   const [title, setTitle] = useState(product.title);
-  const [price, setPrice] = useState(product.price);
-  const [stock, setStock] = useState(product.stock || 0); 
-  const [discount, setDiscount] = useState(product.discount || 0); 
+  const [description, setDescription] = useState(product.description);
   const [img, setImg] = useState(product.img || []);
-  const [description, setDescription] = useState(product.description); 
-  const [categories, setCategories] = useState([]);  
-  const [selectedCategory, setSelectedCategory] = useState(product.category || "");  
-  const [arrival, setArrival] = useState(product.arrival === 'yes');
+  const [selectedCategory, setSelectedCategory] = useState(product.category || "");
 
-  useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const [categoriesRes ] = await Promise.all([
-          fetch("/api/category"),  
-        ]);
+  // Static categories
+  const categories = ["Facades", "Interiors", "Landscapes"];
 
-        setCategories(await categoriesRes.json());  
-      } catch (error) {
-        console.error("Error fetching options:", error);
-      }
-    };
-
-    fetchOptions();
-  }, []);
-
-  const handleSubmit = (e) => { 
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     onSave({
@@ -251,11 +204,7 @@ function EditProductForm({ product, onCancel, onSave }) {
       title,
       description,
       img,
-      price,
-      stock,
-      discount,
-      category: selectedCategory,  
-      arrival: arrival ? 'yes' : 'no',
+      category: selectedCategory,
     });
   };
 
@@ -265,47 +214,47 @@ function EditProductForm({ product, onCancel, onSave }) {
 
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">Title</label>
-        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full border p-2" required />
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full border p-2"
+          required
+        />
       </div>
 
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">Category</label>
-        <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="w-full border p-2">
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="w-full border p-2"
+          required
+        >
           <option value="">Select Category</option>
           {categories.map((cat) => (
-            <option key={cat.id} value={cat.name}>{cat.name}</option>
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
           ))}
         </select>
       </div>
 
-    
-
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Price</label>
-        <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full border p-2" required />
+        <label className="block text-lg font-bold mb-2">Description</label>
+        <ReactQuill
+          value={description}
+          onChange={setDescription}
+          className="mb-4"
+          theme="snow"
+          placeholder="Write your product description here..."
+        />
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Discounted price</label>
-        <input type="number" value={discount} onChange={(e) => setDiscount(e.target.value)} className="w-full border p-2" />
+        <label className="block text-sm font-medium text-gray-700">Product Images</label>
+        <Upload onFilesUpload={(urls) => setImg(urls)} />
       </div>
-
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Stock</label>
-        <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} className="w-full border p-2" required />
-      </div>
-
-
-
-      <label className="block text-lg font-bold mb-2">Description</label>
-      <ReactQuill value={description} onChange={setDescription} className="mb-4" theme="snow" placeholder="Write your product description here..." />
-
-      <div className="mb-4">
-        <input type="checkbox" checked={arrival} onChange={(e) => setArrival(e.target.checked)} />
-        <label className="ml-2 text-sm font-medium">New Arrival</label>
-      </div>
-
-      <Upload onFilesUpload={(url) => setImg(url)} /> 
 
       <div className="flex gap-2">
         <button type="submit" className="bg-green-500 text-white px-4 py-2">Save</button>
@@ -314,3 +263,5 @@ function EditProductForm({ product, onCancel, onSave }) {
     </form>
   );
 }
+ 
+

@@ -8,20 +8,18 @@ export async function POST(req) {
     const {
       title,
       description,
-      img,
-      category,
+      img, 
     } = body;
 
     console.log("body are: ", body);
 
 
 
-    const product = await prisma.arch.create({
+    const product = await prisma.const.create({
       data: {
         title,
         description,
-        img,
-        category,
+        img, 
 
       },
     });
@@ -43,7 +41,7 @@ export async function POST(req) {
 
 export async function GET(req) {
   try {
-    const products = await prisma.arch.findMany({
+    const products = await prisma.const.findMany({
 
     });
 

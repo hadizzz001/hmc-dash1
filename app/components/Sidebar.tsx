@@ -31,27 +31,27 @@ export default function Sidebar() {
           <ul style={{ padding: 0, marginTop: "20px", listStyle: "none" }}>
             <li style={{ marginBottom: "15px" }}>
               <a href="/dashboard" style={{ color: "white", textDecoration: "none" }}>
-                All Products
+                All Architectures
               </a>
             </li>
             <li>
               <a href="/products" style={{ color: "white", textDecoration: "none" }}>
-                Add Product
+                Add Architech
               </a>
             </li>
             <li>
-              <a href="/category" style={{ color: "white", textDecoration: "none" }}>
-                Add Category
+              <a href="/const" style={{ color: "white", textDecoration: "none" }}>
+                Add Construction
               </a>
             </li>    
             <li>
-              <a href="/offer" style={{ color: "white", textDecoration: "none" }}>
-                Add Code
+              <a href="/real" style={{ color: "white", textDecoration: "none" }}>
+                Add Real Estate
               </a>
             </li>  
             <li>
-              <a href="/reservation" style={{ color: "white", textDecoration: "none" }}>
-                Orders
+              <a href="/brand" style={{ color: "white", textDecoration: "none" }}>
+                Brand
               </a>
             </li> 
             <li>
