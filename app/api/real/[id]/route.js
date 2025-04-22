@@ -8,13 +8,23 @@ export async function PATCH(request, { params }) {
   const {
     title,
     description,
-    img, 
-    price ,
-    location ,
+    img,
+    price,
+    location,
+    category,
+    type,
+    bed,
+    bath,
+    size,
+    condition,
+    floor,
+    amenities,
+    age,
+    ref,
   } = await request.json();
 
   console.log("imgs are: ", img);
-  
+
 
   try {
     // Update product and its specifications
@@ -23,9 +33,19 @@ export async function PATCH(request, { params }) {
       data: {
         title,
         description,
-        img, 
-        price ,
-        location ,
+        img,
+        price,
+        location,
+        category,
+        type,
+        bed,
+        bath,
+        size,
+        condition,
+        floor,
+        amenities,
+        age,
+        ref,
       },
     });
 
@@ -44,7 +64,7 @@ export async function DELETE(request, { params }) {
   const { id } = params;
 
   try {
- 
+
 
     // Delete the product
     await prisma.real.delete({

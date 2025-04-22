@@ -20,8 +20,18 @@ model Real {
   title       String
   description String
   price String
-  location String
+  location String 
   img         String[] 
+  category String
+  type String
+  bed String
+  bath String
+  size String
+  condition String
+  floor String
+  amenities String[]
+  age String
+  ref String
 }
 
 model Brand {

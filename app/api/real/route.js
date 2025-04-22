@@ -8,26 +8,42 @@ export async function POST(req) {
     const {
       title,
       description,
-      img, 
-      price ,
-      location ,
+      img,
+      price,
+      location,
+      category,
+      type,
+      bed,
+      bath,
+      size,
+      condition,
+      floor,
+      amenities,
+      age,
+      ref,
     } = body;
 
     console.log("body are: ", body);
-
-
 
     const product = await prisma.real.create({
       data: {
         title,
         description,
-        img, 
-        price ,
-        location ,
+        img,
+        price,
+        location,
+        category,
+        type,
+        bed,
+        bath,
+        size,
+        condition,
+        floor,
+        amenities,
+        age,
+        ref,
       },
     });
-
-
 
     return new Response(JSON.stringify({ message: 'Product created successfully', product }), {
       status: 201,
@@ -44,9 +60,7 @@ export async function POST(req) {
 
 export async function GET(req) {
   try {
-    const products = await prisma.real.findMany({
-
-    });
+    const products = await prisma.real.findMany();
 
     return new Response(JSON.stringify(products), {
       status: 200,
@@ -55,6 +69,23 @@ export async function GET(req) {
   } catch (error) {
     console.error('Error fetching products:', error);
     return new Response(JSON.stringify({ error: 'Failed to fetch products' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+}
+
+export async function DELETE(req) {
+  try {
+    await prisma.real.deleteMany({});
+
+    return new Response(JSON.stringify({ message: 'All products deleted successfully' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('Error deleting products:', error);
+    return new Response(JSON.stringify({ error: 'Failed to delete products' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
