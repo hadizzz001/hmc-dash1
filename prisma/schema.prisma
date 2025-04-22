@@ -32,6 +32,7 @@ model Real {
   amenities String[]
   age String
   ref String
+  date        DateTime @default(now()) @db.Date
 }
 
 model Brand {
