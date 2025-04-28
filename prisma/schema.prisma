@@ -46,3 +46,8 @@ model Const {
   img         String[] 
 }
 
+
+model Bung {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  img         String[] 
+}

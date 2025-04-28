@@ -50,6 +50,11 @@ export default function Sidebar() {
               </a>
             </li>  
             <li>
+              <a href="/bung" style={{ color: "white", textDecoration: "none" }}>
+                Add Bunglow
+              </a>
+            </li>  
+            <li>
               <a href="/brand" style={{ color: "white", textDecoration: "none" }}>
                 Brand
               </a>
