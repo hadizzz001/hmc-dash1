@@ -21,6 +21,9 @@ export async function POST(req) {
       amenities,
       age,
       ref,
+      bro,
+      inv,
+      plan,
     } = body;
 
     console.log("body are: ", body);
@@ -42,6 +45,9 @@ export async function POST(req) {
         amenities,
         age,
         ref,
+        bro,
+        inv,
+        plan,
       },
     });
 

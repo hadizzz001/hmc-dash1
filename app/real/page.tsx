@@ -2,6 +2,9 @@
 
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import Upload from '../components/Upload';
+import Upload1 from '../components/Upload1';
+import Upload2 from '../components/Upload2';
+import Upload3 from '../components/Upload3';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
 
@@ -24,6 +27,9 @@ interface Article {
   amenities: string[];
   age: string;
   ref: string;
+  bro: string;
+  plan: string;
+  inv: string;
 }
 
 const defaultFormData: Article = {
@@ -42,6 +48,9 @@ const defaultFormData: Article = {
   amenities: [],
   age: '',
   ref: '',
+  bro: '',
+  plan: '',
+  inv: '',
 };
 
 const categories = [
@@ -107,6 +116,25 @@ const ManageArticles = () => {
       ? setEditFormData(prev => ({ ...prev, img: uploadedImages }))
       : setFormData(prev => ({ ...prev, img: uploadedImages }));
   };
+
+  const handleBroChange = (uploadedFileName: string) => {
+    editMode
+      ? setEditFormData(prev => ({ ...prev, bro: uploadedFileName }))
+      : setFormData(prev => ({ ...prev, bro: uploadedFileName }));
+  };
+
+  const handleInvChange = (uploadedFileName: string) => {
+    editMode
+      ? setEditFormData(prev => ({ ...prev, inv: uploadedFileName }))
+      : setFormData(prev => ({ ...prev, inv: uploadedFileName }));
+  };
+
+  const handlePayChange = (uploadedFileName: string) => {
+    editMode
+      ? setEditFormData(prev => ({ ...prev, plan: uploadedFileName }))
+      : setFormData(prev => ({ ...prev, plan: uploadedFileName }));
+  };
+
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -204,12 +232,12 @@ const ManageArticles = () => {
         </div>
 
         {[{ name: 'category', options: categories },
-          { name: 'type', options: types },
-          { name: 'bed', options: bedroomOptions },
-          { name: 'bath', options: bathOptions },
-          { name: 'condition', options: conditions },
-          { name: 'floor', options: floors },
-          { name: 'age', options: ageOptions }
+        { name: 'type', options: types },
+        { name: 'bed', options: bedroomOptions },
+        { name: 'bath', options: bathOptions },
+        { name: 'condition', options: conditions },
+        { name: 'floor', options: floors },
+        { name: 'age', options: ageOptions }
         ].map(({ name, options }) => (
           <div key={name}>
             <label className="block mb-1 capitalize">{name}</label>
@@ -227,42 +255,51 @@ const ManageArticles = () => {
           </div>
         ))}
 
-{/* Custom Amenities Multi-select */}
-<div>
-  <label className="block mb-1">Amenities</label>
-  <div className="flex flex-wrap gap-2">
-    {amenitiesList.map((amenity) => {
-      const selected = currentData.amenities.includes(amenity);
-      const toggleAmenity = () => {
-        const newAmenities = selected
-          ? currentData.amenities.filter(a => a !== amenity)
-          : [...currentData.amenities, amenity];
+        {/* Custom Amenities Multi-select */}
+        <div>
+          <label className="block mb-1">Amenities</label>
+          <div className="flex flex-wrap gap-2">
+            {amenitiesList.map((amenity) => {
+              const selected = currentData.amenities.includes(amenity);
+              const toggleAmenity = () => {
+                const newAmenities = selected
+                  ? currentData.amenities.filter(a => a !== amenity)
+                  : [...currentData.amenities, amenity];
 
-        if (editMode) {
-          setEditFormData(prev => ({ ...prev, amenities: newAmenities }));
-        } else {
-          setFormData(prev => ({ ...prev, amenities: newAmenities }));
-        }
-      };
+                if (editMode) {
+                  setEditFormData(prev => ({ ...prev, amenities: newAmenities }));
+                } else {
+                  setFormData(prev => ({ ...prev, amenities: newAmenities }));
+                }
+              };
 
-      return (
-        <button
-          key={amenity}
-          type="button"
-          onClick={toggleAmenity}
-          className={`border px-3 py-1 rounded-full transition-all ${
-            selected ? 'bg-blue-600 text-white' : 'bg-gray-100 text-black'
-          }`}
-        >
-          {amenity} {selected && '✓'}
-        </button>
-      );
-    })}
-  </div>
-</div>
+              return (
+                <button
+                  key={amenity}
+                  type="button"
+                  onClick={toggleAmenity}
+                  className={`border px-3 py-1 rounded-full transition-all ${selected ? 'bg-blue-600 text-white' : 'bg-gray-100 text-black'
+                    }`}
+                >
+                  {amenity} {selected && '✓'}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
 
         <Upload onFilesUpload={handleImgChange} />
+
+        <label htmlFor="bro" className="block mb-1">Brochure</label>
+        <Upload1 onFileUpload={handleBroChange} />
+
+        <label htmlFor="PaymentPlan" className="block mb-1">Payment Plan</label>
+        <Upload2 onFileUpload={handlePayChange} />
+
+        <label htmlFor="Why invest" className="block mb-1">Why invest</label>
+        <Upload3 onFileUpload={handleInvChange} />
+
 
         <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded">
           {editMode ? 'Update' : 'Add'}
@@ -272,52 +309,52 @@ const ManageArticles = () => {
       {message && <p className="mt-4 text-green-600">{message}</p>}
 
       {/* Article List Table */}
-<h2 className="text-xl font-semibold mt-10 mb-4">All Listings</h2>
-<div className="overflow-x-auto">
-  <table className="min-w-full bg-white border border-gray-300 text-sm">
-    <thead>
-      <tr className="bg-gray-100">
-        <th className="p-2 border">Title</th>
-        <th className="p-2 border">Price</th>
-        <th className="p-2 border">Location</th>
-        <th className="p-2 border">Category</th>
-        <th className="p-2 border">Type</th>
-        <th className="p-2 border">Size</th>
-        <th className="p-2 border">Beds</th>
-        <th className="p-2 border">Baths</th>
-        <th className="p-2 border">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {articles.map((item) => (
-        <tr key={item.id} className="text-center">
-          <td className="p-2 border">{item.title}</td>
-          <td className="p-2 border">{item.price}</td>
-          <td className="p-2 border">{item.location}</td>
-          <td className="p-2 border">{item.category}</td>
-          <td className="p-2 border">{item.type}</td>
-          <td className="p-2 border">{item.size}</td>
-          <td className="p-2 border">{item.bed}</td>
-          <td className="p-2 border">{item.bath}</td>
-          <td className="p-2 border space-x-2">
-            <button
-              className="bg-yellow-500 text-white px-3 py-1 rounded"
-              onClick={() => handleEdit(item)}
-            >
-              Edit
-            </button>
-            <button
-              className="bg-red-600 text-white px-3 py-1 rounded"
-              onClick={() => item.id && handleDelete(item.id)}
-            >
-              Delete
-            </button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+      <h2 className="text-xl font-semibold mt-10 mb-4">All Listings</h2>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-300 text-sm">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="p-2 border">Title</th>
+              <th className="p-2 border">Price</th>
+              <th className="p-2 border">Location</th>
+              <th className="p-2 border">Category</th>
+              <th className="p-2 border">Type</th>
+              <th className="p-2 border">Size</th>
+              <th className="p-2 border">Beds</th>
+              <th className="p-2 border">Baths</th>
+              <th className="p-2 border">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {articles.map((item) => (
+              <tr key={item.id} className="text-center">
+                <td className="p-2 border">{item.title}</td>
+                <td className="p-2 border">{item.price}</td>
+                <td className="p-2 border">{item.location}</td>
+                <td className="p-2 border">{item.category}</td>
+                <td className="p-2 border">{item.type}</td>
+                <td className="p-2 border">{item.size}</td>
+                <td className="p-2 border">{item.bed}</td>
+                <td className="p-2 border">{item.bath}</td>
+                <td className="p-2 border space-x-2">
+                  <button
+                    className="bg-yellow-500 text-white px-3 py-1 rounded"
+                    onClick={() => handleEdit(item)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="bg-red-600 text-white px-3 py-1 rounded"
+                    onClick={() => item.id && handleDelete(item.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
     </div>
   );

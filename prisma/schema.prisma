@@ -32,6 +32,9 @@ model Real {
   amenities String[]
   age String
   ref String
+  bro String?
+  inv String?
+  plan String?
   date        DateTime @default(now()) @db.Date
 }
 
@@ -51,3 +54,5 @@ model Bung {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   img         String[] 
 }
+
+ 
