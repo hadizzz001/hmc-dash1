@@ -1,12 +1,94 @@
 'use client';
 
-import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent, useRef } from 'react';
 import Upload from '../components/Upload';
 import Upload1 from '../components/Upload1';
 import Upload2 from '../components/Upload2';
 import Upload3 from '../components/Upload3';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
+
+
+
+
+
+const AmenitiesDropdown = ({
+  selectedAmenities,
+  onChange,
+}: {
+  selectedAmenities: string[];
+  onChange: (newAmenities: string[]) => void;
+}) => {
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const toggleAmenity = (amenity: string) => {
+    if (selectedAmenities.includes(amenity)) {
+      onChange(selectedAmenities.filter(a => a !== amenity));
+    } else {
+      onChange([...selectedAmenities, amenity]);
+    }
+  };
+
+  return (
+    <div className="relative inline-block w-full" ref={dropdownRef}>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full border p-2 text-left rounded"
+      >
+        {selectedAmenities.length > 0
+          ? `Selected (${selectedAmenities.length})`
+          : 'Select Amenities'}
+        <span className="float-right">▾</span>
+      </button>
+
+      {open && (
+        <div className="absolute z-10 mt-1 w-full max-h-64 overflow-y-auto border bg-white rounded shadow-lg">
+          {amenitiesList.map((amenity) => (
+            <label
+              key={amenity}
+              className="flex items-center px-3 py-1 cursor-pointer hover:bg-gray-100"
+            >
+              <input
+                type="checkbox"
+                checked={selectedAmenities.includes(amenity)}
+                onChange={() => toggleAmenity(amenity)}
+                className="mr-2"
+              />
+              <span className="text-sm">{amenity}</span>
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -159,6 +241,7 @@ const amenitiesList = [
   "Yoga Studio"
 ];
 
+
 const ageOptions = ["1 year - 5 years", "5 years - 10 years", "10+ years"];
 
 const ManageArticles = () => {
@@ -167,6 +250,14 @@ const ManageArticles = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
+  
+const [amenitiesFilter, setAmenitiesFilter] = useState('');
+
+const filteredAmenities = amenitiesList.filter((amenity) =>
+  amenity.toLowerCase().includes(amenitiesFilter.toLowerCase())
+);
+  
+  
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, multiple, selectedOptions } = e.target as HTMLSelectElement;
@@ -281,7 +372,7 @@ const ManageArticles = () => {
     }
   };
 
-  const currentData = editMode ? editFormData : formData;
+  const currentData = editMode ? editFormData : formData; 
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -340,37 +431,53 @@ const ManageArticles = () => {
         ))}
 
         {/* Custom Amenities Multi-select */}
-        <div>
-          <label className="block mb-1">Amenities</label>
-          <div className="flex flex-wrap gap-2">
-            {amenitiesList.map((amenity) => {
-              const selected = currentData.amenities.includes(amenity);
-              const toggleAmenity = () => {
-                const newAmenities = selected
-                  ? currentData.amenities.filter(a => a !== amenity)
-                  : [...currentData.amenities, amenity];
+<div>
+    <label className="block mb-1">Amenities</label>
 
-                if (editMode) {
-                  setEditFormData(prev => ({ ...prev, amenities: newAmenities }));
-                } else {
-                  setFormData(prev => ({ ...prev, amenities: newAmenities }));
-                }
-              };
+    {/* Filter input */}
+    <input
+      type="text"
+      placeholder="Search amenities..."
+      value={amenitiesFilter}
+      onChange={(e) => setAmenitiesFilter(e.target.value)}
+      className="border p-2 mb-2 w-full"
+    />
 
-              return (
-                <button
-                  key={amenity}
-                  type="button"
-                  onClick={toggleAmenity}
-                  className={`border px-3 py-1 rounded-full transition-all ${selected ? 'bg-blue-600 text-white' : 'bg-gray-100 text-black'
-                    }`}
-                >
-                  {amenity} {selected && '✓'}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+    {/* Amenities list as checkboxes */}
+    <div className="max-h-48 overflow-auto border rounded p-2">
+      {filteredAmenities.length === 0 && (
+        <p className="text-sm text-gray-500">No amenities found.</p>
+      )}
+      {filteredAmenities.map((amenity) => {
+        const selected = currentData.amenities.includes(amenity);
+
+        const toggleAmenity = () => {
+          const newAmenities = selected
+            ? currentData.amenities.filter((a) => a !== amenity)
+            : [...currentData.amenities, amenity];
+
+          if (editMode) {
+            setEditFormData((prev) => ({ ...prev, amenities: newAmenities }));
+          } else {
+            setFormData((prev) => ({ ...prev, amenities: newAmenities }));
+          }
+        };
+
+        return (
+          <label key={amenity} className="flex items-center space-x-2 mb-1 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={selected}
+              onChange={toggleAmenity}
+              className="w-4 h-4"
+            />
+            <span className="text-sm">{amenity}</span>
+          </label>
+        );
+      })}
+    </div>
+  </div>
+
 
 
         <Upload onFilesUpload={handleImgChange} />

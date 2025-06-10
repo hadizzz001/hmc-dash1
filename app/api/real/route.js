@@ -97,3 +97,27 @@ export async function DELETE(req) {
     });
   }
 }
+
+
+
+
+export async function PATCH(req) {
+  try {
+    await prisma.real.updateMany({
+      data: {
+        amenities: [],
+      },
+    });
+
+    return new Response(JSON.stringify({ message: 'All amenities deleted successfully' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('Error deleting amenities:', error);
+    return new Response(JSON.stringify({ error: 'Failed to delete amenities' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+}
